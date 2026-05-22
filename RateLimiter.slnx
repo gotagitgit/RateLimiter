@@ -14,5 +14,6 @@
     <Project Path="tests/RateLimiter.Application.Tests/RateLimiter.Application.Tests.csproj" />
     <Project Path="tests/RateLimiter.Infrastructure.Tests/RateLimiter.Infrastructure.Tests.csproj" />
     <Project Path="tests/RateLimiter.Gateway.Tests/RateLimiter.Gateway.Tests.csproj" />
+    <Project Path="tests/RateLimiter.Gateway.IntegrationTests/RateLimiter.Gateway.IntegrationTests.csproj" />
   </Folder>
 </Solution>
