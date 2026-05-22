@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/RateLimiter.Domain/RateLimiter.Domain.csproj" />
+    <Project Path="src/RateLimiter.Application/RateLimiter.Application.csproj" />
+    <Project Path="src/RateLimiter.Infrastructure/RateLimiter.Infrastructure.csproj" />
+    <Project Path="src/RateLimiter.Gateway/RateLimiter.Gateway.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RateLimiter.Domain.Tests/RateLimiter.Domain.Tests.csproj" />
+    <Project Path="tests/RateLimiter.Application.Tests/RateLimiter.Application.Tests.csproj" />
+    <Project Path="tests/RateLimiter.Infrastructure.Tests/RateLimiter.Infrastructure.Tests.csproj" />
+    <Project Path="tests/RateLimiter.Gateway.Tests/RateLimiter.Gateway.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,28 @@
+{
+  "rateLimitRules": [
+    {
+      "ruleId": "default-anonymous",
+      "bucketCapacity": 100,
+      "refillRatePerSecond": 10,
+      "appliesTo": "Anonymous"
+    },
+    {
+      "ruleId": "standard-api-key",
+      "bucketCapacity": 1000,
+      "refillRatePerSecond": 100,
+      "appliesTo": "ApiKey"
+    },
+    {
+      "ruleId": "standard-user",
+      "bucketCapacity": 500,
+      "refillRatePerSecond": 50,
+      "appliesTo": "UserId"
+    },
+    {
+      "ruleId": "standard-ip",
+      "bucketCapacity": 200,
+      "refillRatePerSecond": 20,
+      "appliesTo": "IpAddress"
+    }
+  ]
+}

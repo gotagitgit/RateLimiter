@@ -1,0 +1,22 @@
+name: ratelimiter
+
+services:
+  redis:
+    image: redis:8.2
+    container_name: ratelimiter-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ratelimit-data:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: ratelimiter-redisinsight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/data
+
+volumes:
+  ratelimit-data:
+  redisinsight-data:

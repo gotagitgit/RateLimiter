@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis"/>
+    <PackageReference Include="Microsoft.Extensions.Resilience"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RateLimiter.Application\RateLimiter.Application.csproj" />
+    <ProjectReference Include="..\RateLimiter.Domain\RateLimiter.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
