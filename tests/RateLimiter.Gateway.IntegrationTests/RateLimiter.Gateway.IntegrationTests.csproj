@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+    <PackageReference Include="Testcontainers.Redis"/>
+    <PackageReference Include="xunit"/>
+    <PackageReference Include="xunit.runner.visualstudio"/>
+    <PackageReference Include="FluentAssertions"/>
+    <PackageReference Include="FsCheck"/>
+    <PackageReference Include="FsCheck.Xunit"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RateLimiter.Gateway\RateLimiter.Gateway.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="test-ratelimit-rules.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

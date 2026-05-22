@@ -1,0 +1,28 @@
+{
+  "rateLimitRules": [
+    {
+      "ruleId": "test-api-key",
+      "bucketCapacity": 5,
+      "refillRatePerSecond": 1,
+      "appliesTo": "ApiKey"
+    },
+    {
+      "ruleId": "test-user-id",
+      "bucketCapacity": 5,
+      "refillRatePerSecond": 1,
+      "appliesTo": "UserId"
+    },
+    {
+      "ruleId": "test-ip",
+      "bucketCapacity": 5,
+      "refillRatePerSecond": 1,
+      "appliesTo": "IpAddress"
+    },
+    {
+      "ruleId": "test-anonymous",
+      "bucketCapacity": 5,
+      "refillRatePerSecond": 1,
+      "appliesTo": "Anonymous"
+    }
+  ]
+}
