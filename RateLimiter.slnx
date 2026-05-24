@@ -8,6 +8,9 @@
     <Project Path="src/RateLimiter.Application/RateLimiter.Application.csproj" />
     <Project Path="src/RateLimiter.Infrastructure/RateLimiter.Infrastructure.csproj" />
     <Project Path="src/RateLimiter.Gateway/RateLimiter.Gateway.csproj" />
+    <Project Path="src/RateLimiter.SampleApi/RateLimiter.SampleApi.csproj" />
+    <Project Path="src/RateLimiter.ServiceDefaults/RateLimiter.ServiceDefaults.csproj" />
+    <Project Path="src/RateLimiter.AppHost/RateLimiter.AppHost.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/RateLimiter.Domain.Tests/RateLimiter.Domain.Tests.csproj" />
