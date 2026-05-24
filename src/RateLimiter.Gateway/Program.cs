@@ -35,7 +35,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/openapi/v1.json", "RateLimiter Gateway API");
+        options.SwaggerEndpoint("/openapi/v1.json", "RateLimiter Gateway");
+        options.SwaggerEndpoint("/api/openapi/v1.json", "SampleApi");
     });
 }
 

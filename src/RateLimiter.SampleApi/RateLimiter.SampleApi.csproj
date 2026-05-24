@@ -4,4 +4,9 @@
     <ProjectReference Include="..\RateLimiter.ServiceDefaults\RateLimiter.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI"/>
+  </ItemGroup>
+
 </Project>
