@@ -1,0 +1,12 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.0.2">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RateLimiter.Gateway\RateLimiter.Gateway.csproj" />
+    <ProjectReference Include="..\RateLimiter.SampleApi\RateLimiter.SampleApi.csproj" />
+  </ItemGroup>
+
+</Project>

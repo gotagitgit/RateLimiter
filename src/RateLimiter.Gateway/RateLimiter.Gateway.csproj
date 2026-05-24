@@ -8,10 +8,15 @@
     <ProjectReference Include="..\RateLimiter.Application\RateLimiter.Application.csproj"/>
     <ProjectReference Include="..\RateLimiter.Domain\RateLimiter.Domain.csproj"/>
     <ProjectReference Include="..\RateLimiter.Infrastructure\RateLimiter.Infrastructure.csproj"/>
+    <ProjectReference Include="..\RateLimiter.ServiceDefaults\RateLimiter.ServiceDefaults.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.Extensions.Resilience"/>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI"/>
+    <PackageReference Include="Yarp.ReverseProxy"/>
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp"/>
   </ItemGroup>
 
   <ItemGroup>

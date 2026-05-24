@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
     <PackageReference Include="Testcontainers.Redis"/>
+    <PackageReference Include="WireMock.Net"/>
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio"/>
     <PackageReference Include="FluentAssertions"/>
