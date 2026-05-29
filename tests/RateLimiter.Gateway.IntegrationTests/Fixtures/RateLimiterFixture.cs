@@ -69,18 +69,42 @@ public sealed class RateLimiterFixture : IAsyncLifetime
 
     public async Task FlushRedisAsync()
     {
+        if (_redis is null || !_redis.IsConnected)
+            return;
+
         var server = _redis.GetServer(_redis.GetEndPoints().First());
         await server.FlushDatabaseAsync();
     }
 
     public async Task StopRedisAsync()
     {
+        if (_redis is not null)
+        {
+            await _redis.CloseAsync();
+            _redis.Dispose();
+            _redis = null!;
+        }
+
         await _redisContainer.StopAsync();
     }
 
     public async Task StartRedisAsync()
     {
         await _redisContainer.StartAsync();
+
+        // Reconnect after restart — the container may have a new port mapping
+        var connectionString = _redisContainer.GetConnectionString();
+        var configOptions = ConfigurationOptions.Parse(connectionString);
+        configOptions.ConnectTimeout = 30_000;
+        configOptions.SyncTimeout = 30_000;
+        configOptions.AsyncTimeout = 30_000;
+        configOptions.AllowAdmin = true;
+
+        _redis = await ConnectionMultiplexer.ConnectAsync(configOptions);
+
+        // Recreate the factory so it uses the new Redis connection string
+        _factory?.Dispose();
+        _factory = CreateFactory();
     }
 
     private WebApplicationFactory<Program> CreateFactory(string failurePolicy = "FailClose")

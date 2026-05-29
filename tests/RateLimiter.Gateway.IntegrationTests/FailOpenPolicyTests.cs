@@ -74,10 +74,10 @@ public class FailOpenPolicyTests : IAsyncLifetime
 
     /// <summary>
     /// Verifies that when Redis is unavailable and FailurePolicy is FailOpen,
-    /// the response does not include rate limit headers.
+    /// the response includes rate limit headers with full capacity values.
     /// </summary>
     [Fact]
-    public async Task Response_DoesNotIncludeRateLimitHeaders_WhenRedisUnavailableAndFailOpen()
+    public async Task Response_IncludesRateLimitHeadersWithFullCapacity_WhenRedisUnavailableAndFailOpen()
     {
         // Arrange
         using var client = _failOpenFactory!.CreateClient();
@@ -86,9 +86,16 @@ public class FailOpenPolicyTests : IAsyncLifetime
         // Act
         var response = await client.GetAsync("/");
 
-        // Assert
-        response.Headers.Should().NotContain(h => h.Key == "X-Rate-Limit-Limit");
-        response.Headers.Should().NotContain(h => h.Key == "X-Rate-Limit-Remaining");
+        // Assert — FailOpen returns a decision with IsAllowed=true and full capacity,
+        // so the middleware sets headers as if the request was allowed with a full bucket.
+        response.Headers.Should().ContainKey("X-Rate-Limit-Limit");
+        response.Headers.GetValues("X-Rate-Limit-Limit").Single()
+            .Should().Be(RateLimiterFixture.TestBucketCapacity.ToString());
+
+        response.Headers.Should().ContainKey("X-Rate-Limit-Remaining");
+        response.Headers.GetValues("X-Rate-Limit-Remaining").Single()
+            .Should().Be(RateLimiterFixture.TestBucketCapacity.ToString());
+
         response.Headers.Should().NotContain(h => h.Key == "Retry-After");
     }
 

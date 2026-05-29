@@ -43,57 +43,11 @@ A .NET 10 rate-limiting reverse proxy gateway that protects backend APIs from ex
 
 ## Token Bucket Algorithm
 
-The Token Bucket is a rate-limiting algorithm that controls throughput by maintaining a virtual "bucket" of tokens for each client.
+This gateway uses the **Token Bucket** algorithm to enforce rate limits. Each client gets a bucket of tokens that refills at a steady rate. Requests consume tokens; when the bucket is empty, requests are denied with HTTP 429.
 
-```
-    Token Bucket Lifecycle
-    ══════════════════════
+Token Bucket provides burst tolerance (unlike Leaky Bucket) without the boundary-burst problems of fixed-window counters, and the entire check-refill-consume operation runs as an atomic Lua script in Redis for consistency across gateway instances.
 
-    ┌─────────────────────────────────────┐
-    │         Token Bucket (Client)       │
-    │                                     │
-    │   Capacity: 100 tokens              │
-    │   Refill Rate: 10 tokens/sec        │
-    │                                     │
-    │   ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐             │
-    │   │●│●│●│●│●│●│●│ │ │ │  ← Tokens   │
-    │   └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘             │
-    │         7 / 10 available            │
-    └─────────────────────────────────────┘
-
-    How it works:
-
-    1. INITIALIZE
-       Bucket starts full (capacity tokens).
-
-    2. REQUEST ARRIVES
-       ├── Tokens ≥ 1?
-       │     ├── YES → Consume 1 token, ALLOW request
-       │     └── NO  → DENY request (HTTP 429)
-       │               Return Retry-After = (1 - tokens) / refill_rate
-
-    3. REFILL (continuous)
-       Tokens accumulate at refill_rate per second,
-       capped at bucket capacity.
-
-       elapsed_ms × refill_rate / 1000 = tokens_to_add
-```
-
-### Key Properties
-
-| Property | Description |
-|----------|-------------|
-| **Bucket Capacity** | Maximum number of tokens (burst limit) |
-| **Refill Rate** | Tokens added per second (sustained throughput) |
-| **Burst Tolerance** | A full bucket allows short bursts up to capacity |
-| **Smooth Refill** | Tokens refill continuously, not in fixed windows |
-
-### Why Token Bucket?
-
-- **Allows bursts**: Unlike fixed-window counters, clients can burst up to the bucket capacity.
-- **Smooth rate limiting**: Tokens refill continuously, so there's no "reset cliff" at window boundaries.
-- **Predictable**: Clients know exactly when they can retry via the `Retry-After` header.
-- **Atomic in Redis**: The entire check-and-decrement runs as a single Lua script, preventing race conditions across multiple gateway instances.
+For a deep dive into the algorithm, the problem it solves, and how it compares to alternatives, see **[Token Bucket Algorithm](docs/token-bucket-algorithm.md)**.
 
 ---
 
@@ -138,7 +92,7 @@ You can send requests to the gateway at `/api/products` and they will be rate-li
 ```
 RateLimiter/
 ├── src/
-│   ├── RateLimiter.Domain           # Core domain: TokenBucketAlgorithm, rules, decisions
+│   ├── RateLimiter.Domain           # Core domain: rules, decisions, identifiers
 │   ├── RateLimiter.Application      # Application services: RateLimitService, rule provider
 │   ├── RateLimiter.Infrastructure   # Redis state store (Lua scripts), resilience, config polling
 │   ├── RateLimiter.Gateway          # ASP.NET Core host: middleware + YARP reverse proxy
@@ -146,7 +100,6 @@ RateLimiter/
 │   ├── RateLimiter.AppHost          # .NET Aspire orchestrator
 │   └── RateLimiter.ServiceDefaults  # Shared Aspire defaults (OpenTelemetry, health checks)
 ├── tests/
-│   ├── RateLimiter.Domain.Tests
 │   ├── RateLimiter.Application.Tests
 │   ├── RateLimiter.Infrastructure.Tests
 │   ├── RateLimiter.Gateway.Tests

@@ -13,7 +13,6 @@
     <Project Path="src/RateLimiter.AppHost/RateLimiter.AppHost.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/RateLimiter.Domain.Tests/RateLimiter.Domain.Tests.csproj" />
     <Project Path="tests/RateLimiter.Application.Tests/RateLimiter.Application.Tests.csproj" />
     <Project Path="tests/RateLimiter.Infrastructure.Tests/RateLimiter.Infrastructure.Tests.csproj" />
     <Project Path="tests/RateLimiter.Gateway.Tests/RateLimiter.Gateway.Tests.csproj" />
