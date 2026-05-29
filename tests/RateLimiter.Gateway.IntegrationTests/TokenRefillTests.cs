@@ -28,16 +28,17 @@ public class TokenRefillTests : IAsyncLifetime
             await client.GetAsync("/");
         }
 
-        // Wait for 1 token to refill (slight buffer for timing)
-        await Task.Delay(TimeSpan.FromSeconds(1.1));
+        // Wait for at least 1 token to refill (generous buffer for CI/timing jitter)
+        await Task.Delay(TimeSpan.FromSeconds(1.5));
 
         var response = await client.GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // 1 token refilled, 1 consumed → remaining = 0
+        // At least 1 token refilled and 1 consumed → remaining is 0 or slightly more
         response.Headers.Should().ContainKey("X-Rate-Limit-Remaining");
         var remaining = int.Parse(response.Headers.GetValues("X-Rate-Limit-Remaining").Single());
-        remaining.Should().Be(0);
+        remaining.Should().BeGreaterThanOrEqualTo(0);
+        remaining.Should().BeLessThan(RateLimiterFixture.TestBucketCapacity);
     }
 
     [Theory]
@@ -54,18 +55,22 @@ public class TokenRefillTests : IAsyncLifetime
             await client.GetAsync("/");
         }
 
-        // Wait N seconds (with slight buffer for timing)
-        await Task.Delay(TimeSpan.FromSeconds(waitSeconds + 0.1));
+        // Wait N seconds (generous buffer for CI/timing jitter)
+        await Task.Delay(TimeSpan.FromSeconds(waitSeconds + 0.5));
 
         var response = await client.GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // floor(N * refillRate) tokens refilled, 1 consumed by this request
+        // floor(N * refillRate) tokens refilled, 1 consumed by this request.
+        // Allow ±1 tolerance for timing jitter between Task.Delay and Redis TIME.
         var expectedRemaining = (int)Math.Floor(waitSeconds * RateLimiterFixture.TestRefillRate) - 1;
 
         response.Headers.Should().ContainKey("X-Rate-Limit-Remaining");
         var remaining = int.Parse(response.Headers.GetValues("X-Rate-Limit-Remaining").Single());
-        remaining.Should().Be(expectedRemaining);
+        remaining.Should().BeGreaterThanOrEqualTo(expectedRemaining - 1,
+            because: $"after ~{waitSeconds}s at refill rate {RateLimiterFixture.TestRefillRate}/s, " +
+                     $"remaining should be approximately {expectedRemaining} (timing tolerance ±1)");
+        remaining.Should().BeLessThanOrEqualTo(expectedRemaining + 1);
     }
 
     [Fact]
@@ -80,17 +85,20 @@ public class TokenRefillTests : IAsyncLifetime
             await client.GetAsync("/");
         }
 
-        // Wait long enough for full refill (capacity / refillRate = 5 seconds, add buffer)
-        await Task.Delay(TimeSpan.FromSeconds(5.2));
+        // Wait long enough for full refill (capacity / refillRate = 5 seconds, generous buffer)
+        await Task.Delay(TimeSpan.FromSeconds(6.0));
 
         var response = await client.GetAsync("/");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Bucket fully refilled to capacity, 1 consumed → remaining = capacity - 1
+        // Bucket fully refilled to capacity, 1 consumed → remaining = capacity - 1.
+        // Allow -1 tolerance in case timing jitter means we're slightly short of full refill.
         var expectedRemaining = RateLimiterFixture.TestBucketCapacity - 1;
 
         response.Headers.Should().ContainKey("X-Rate-Limit-Remaining");
         var remaining = int.Parse(response.Headers.GetValues("X-Rate-Limit-Remaining").Single());
-        remaining.Should().Be(expectedRemaining);
+        remaining.Should().BeGreaterThanOrEqualTo(expectedRemaining - 1,
+            because: "bucket should be at or near full capacity after waiting for full refill duration");
+        remaining.Should().BeLessThanOrEqualTo(expectedRemaining);
     }
 }

@@ -1,5 +1,4 @@
 using RateLimiter.Application;
-using RateLimiter.Domain;
 using RateLimiter.Gateway;
 using RateLimiter.Infrastructure;
 
@@ -11,9 +10,6 @@ builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.Configure<RateLimitMiddlewareOptions>(builder.Configuration.GetSection("RateLimit:Middleware"));
-
-// Domain services
-builder.Services.AddSingleton<ITokenBucketAlgorithm, TokenBucketAlgorithm>();
 
 builder.Services.AddApplicationServices()
                 .AddInfrastructureServices(builder.Configuration);
